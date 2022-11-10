@@ -1,0 +1,15 @@
+[package]
+name = "sous"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "Manage culinary recipes using YAML"
+repository = "https://github.com/emar10/sous/"
+readme = "README.md"
+
+[dependencies]
+clap = { version = "4.0.12", features = ["derive"] }
+serde = { version = "1.0.145", features = ["derive"] }
+serde_yaml = "0.9.13"
+thiserror = "1.0.37"
+
