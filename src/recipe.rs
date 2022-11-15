@@ -1,10 +1,13 @@
-use std::{path::Path, fs::{self, File}};
 use std::fmt::Write as FmtWrite;
 use std::io::Write as IoWrite;
+use std::{
+    fs::{self, File},
+    path::Path,
+};
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
-use crate::{SousError, render::RenderSettings};
+use crate::{render::RenderSettings, SousError};
 
 /// Container for ingredient metadata
 #[derive(Serialize, Deserialize, Debug)]
@@ -63,8 +66,7 @@ impl Recipe {
                 write!(output, "author: {}\n", self.metadata.author).unwrap();
 
                 write!(output, "---\n\n").unwrap();
-            }
-            else {
+            } else {
                 write!(output, "# {}\n", self.metadata.name).unwrap();
 
                 write!(output, "**{}", self.metadata.author).unwrap();
@@ -78,7 +80,12 @@ impl Recipe {
             if let Some(prep) = &self.metadata.prep_minutes {
                 write!(output, " | {} minutes prep", prep).unwrap();
             }
-            write!(output, " | {} minutes cook time**\n\n", self.metadata.cook_minutes).unwrap();
+            write!(
+                output,
+                " | {} minutes cook time**\n\n",
+                self.metadata.cook_minutes
+            )
+            .unwrap();
         }
 
         if settings.ingredients {
@@ -121,8 +128,7 @@ impl Recipe {
 
     pub fn from_file(path: &Path) -> Result<Recipe, SousError> {
         let content = fs::read_to_string(path)?;
-        
+
         Ok(Self::from_yaml(&content)?)
     }
 }
-

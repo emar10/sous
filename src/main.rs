@@ -1,8 +1,8 @@
-use std::{path::PathBuf, process, fs};
+use std::{fs, path::PathBuf, process};
 
 use clap::Parser;
 
-use sous::{self, Recipe, render::RenderSettings, cookbook::Cookbook};
+use sous::{self, cookbook::Cookbook, render::RenderSettings, Recipe};
 
 #[derive(Parser, Debug)]
 #[command()]
@@ -38,7 +38,7 @@ fn main() {
             process::exit(1);
         });
 
-        let output = args.output.unwrap_or_else(|| { PathBuf::from("render") });
+        let output = args.output.unwrap_or_else(|| PathBuf::from("render"));
         if !output.is_dir() {
             fs::create_dir(&output).unwrap_or_else(|e| {
                 eprintln!("failed to open output directory: {e}");
@@ -51,9 +51,14 @@ fn main() {
                 process::exit(1);
             });
 
-            recipe.to_file(&output.join(PathBuf::from(file).with_extension("md")), &settings).unwrap_or_else(|e| {
-                eprintln!("failed to write file for recipe {file}: {e}");
-            })
+            recipe
+                .to_file(
+                    &output.join(PathBuf::from(file).with_extension("md")),
+                    &settings,
+                )
+                .unwrap_or_else(|e| {
+                    eprintln!("failed to write file for recipe {file}: {e}");
+                })
         }
     } else {
         let recipe = Recipe::from_file(&args.input).unwrap_or_else(|e| {
@@ -74,4 +79,3 @@ fn main() {
         }
     }
 }
-
