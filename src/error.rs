@@ -11,4 +11,3 @@ pub enum SousError {
     #[error("Unknown internal error")]
     Unknown,
 }
-
