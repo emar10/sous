@@ -7,18 +7,8 @@ use std::{
 
 use serde::{Deserialize, Serialize};
 
+use crate::ingredient::Ingredient;
 use crate::{render::RenderSettings, SousError};
-
-/// Container for ingredient metadata
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Ingredient {
-    /// The ingredient's display name
-    pub name: String,
-    /// Optional unit description
-    pub unit: Option<String>,
-    /// Optional amount of the ingredient to be used
-    pub amount: Option<f32>,
-}
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Metadata {
