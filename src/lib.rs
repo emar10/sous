@@ -1,5 +1,6 @@
 pub mod cookbook;
 pub mod error;
+pub mod ingredient;
 pub mod recipe;
 pub mod render;
 
