@@ -8,23 +8,8 @@ use std::{
 use serde::{Deserialize, Serialize};
 
 use crate::ingredient::Ingredient;
+use crate::metadata::Metadata;
 use crate::{render::RenderSettings, SousError};
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Metadata {
-    /// Display name for the recipe
-    pub name: String,
-    /// Original author of the recipe
-    pub author: String,
-    /// Servings yielded by the recipe as written
-    pub servings: u32,
-    /// Optional URL source of the recipe
-    pub url: Option<String>,
-    /// Optional time in minutes estimated for prep
-    pub prep_minutes: Option<u32>,
-    /// Time in minutes estimated for cooking
-    pub cook_minutes: u32,
-}
 
 /// A Recipe describing how to make a dish
 #[derive(Serialize, Deserialize, Debug)]
