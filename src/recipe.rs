@@ -12,18 +12,22 @@ use crate::metadata::Metadata;
 use crate::{render::RenderSettings, SousError};
 
 /// A Recipe describing how to make a dish
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Debug, PartialEq, PartialOrd, Default, Serialize, Deserialize)]
 pub struct Recipe {
     /// Recipe metadata
     #[serde(flatten)]
-    metadata: Metadata,
+    pub metadata: Metadata,
     /// List of steps required to make the dish
-    steps: Vec<String>,
+    pub steps: Vec<String>,
     /// List of `Ingredient`s required to make the dish
-    ingredients: Vec<Ingredient>,
+    pub ingredients: Vec<Ingredient>,
 }
 
 impl Recipe {
+    pub fn new() -> Self {
+        Default::default()
+    }
+
     /// Construct a Markdown-formatted `String` representation of the Recipe
     pub fn to_markdown(&self, settings: &RenderSettings) -> String {
         let mut output = String::new();
