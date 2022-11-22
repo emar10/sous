@@ -30,4 +30,3 @@ impl Display for Metadata {
         write!(f, "{} by {}", self.name, self.author)
     }
 }
-
