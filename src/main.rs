@@ -4,21 +4,35 @@ use clap::Parser;
 
 use sous::{self, cookbook::Cookbook, render::RenderSettings, Recipe};
 
+/// Convert YAML culinary recipes to Markdown.
 #[derive(Parser, Debug)]
 #[command()]
 struct Args {
-    /// Cookbook or single YAML-formatted recipe to convert
+    /// Cookbook or single YAML-formatted recipe to convert.
+    ///
+    /// Single-file mode or Cookbook mode will automatically be selected based on whether INPUT
+    /// points to a file or directory.
     #[arg()]
     input: PathBuf,
 
-    /// Output file/directory
+    /// Output path.
+    ///
+    /// In single-file mode, output to the specified file instead of printing to stdout. In
+    /// Cookbook mode, specify the directory in which to output (will be created if necessary).
     #[arg(short, long)]
     output: Option<PathBuf>,
 
-    /// Override number of servings
+    /// Override number of servings.
+    ///
+    /// Render recipes with a specific number of servings. Ingredient amounts will be adjusted
+    /// accordingly.
     #[arg(short, long, value_parser = clap::value_parser!(u32).range(1..))]
     servings: Option<u32>,
 
+    /// Use front matter instead of pure Markdown.
+    ///
+    /// This option enables outputting some metadata content to YAML front matter instead of using
+    /// Markdown headers. Useful for static site generators.
     #[arg(short, long)]
     front_matter: bool,
 }
