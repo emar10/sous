@@ -9,12 +9,15 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - An initial GitHub Actions workflow to ensure the project compiles and is
   formatted reasonably.
 - This changelog!
+- Documentation comments for the public API.
 
 ### Changed
 
 - Recipe data structs have been split into their own modules and implement
   common standard library traits.
 - Fields in `Recipe` are now public.
+- Refined help text for the CLI.
+- Populated `README.md`.
 
 ### Fixed
 
