@@ -34,7 +34,7 @@ pub use crate::error::SousError;
 pub use crate::ingredient::Ingredient;
 pub use crate::metadata::Metadata;
 pub use crate::recipe::Recipe;
-pub use crate::render::RenderSettings;
+pub use crate::render::Markdown;
 
 pub mod cookbook;
 pub mod error;
