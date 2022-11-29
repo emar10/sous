@@ -10,6 +10,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   formatted reasonably.
 - This changelog!
 - Documentation comments for the public API.
+- New `Renderer` trait for types that can construct string representations of
+  recipes.
 
 ### Changed
 
@@ -18,6 +20,12 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fields in `Recipe` are now public.
 - Refined help text for the CLI.
 - Populated `README.md`.
+- `RenderSettings` has been renamed to `Markdown`, and implements `Renderer`.
+
+### Removed
+
+- `Recipe::to_markdown()` and `Recipe::to_file()` (see the `Markdown`
+  renderer).
 
 ### Fixed
 
