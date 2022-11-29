@@ -6,7 +6,8 @@
 //! ```rust
 //! # use sous::ingredient::Ingredient;
 //! # use sous::recipe::Recipe;
-//! # use sous::render::RenderSettings;
+//! # use sous::render::Markdown;
+//! # use sous::render::Renderer;
 //! fn main() {
 //!     let mut recipe = Recipe::new();
 //!
@@ -23,7 +24,8 @@
 //!     recipe.steps.push("First step".to_string());
 //!     recipe.steps.push("Second step".to_string());
 //!
-//!     let md = recipe.to_markdown(&RenderSettings::default());
+//!     let render = Markdown::new();
+//!     let md = render.render(&recipe);
 //! }
 //! ```
 
