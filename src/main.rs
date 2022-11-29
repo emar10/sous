@@ -2,7 +2,12 @@ use std::{fs, path::PathBuf, process};
 
 use clap::Parser;
 
-use sous::{self, cookbook::Cookbook, render::RenderSettings, Recipe};
+use sous::{
+    self,
+    cookbook::Cookbook,
+    render::{Markdown, Renderer},
+    Recipe,
+};
 
 /// Convert YAML culinary recipes to Markdown.
 #[derive(Parser, Debug)]
@@ -40,7 +45,7 @@ struct Args {
 fn main() {
     let args = Args::parse();
 
-    let settings = RenderSettings {
+    let renderer = Markdown {
         servings: args.servings,
         front_matter: args.front_matter,
         ..Default::default()
@@ -65,14 +70,14 @@ fn main() {
                 process::exit(1);
             });
 
-            recipe
-                .to_file(
-                    &output.join(PathBuf::from(file).with_extension("md")),
-                    &settings,
-                )
-                .unwrap_or_else(|e| {
-                    eprintln!("failed to write file for recipe {file}: {e}");
-                })
+            fs::write(
+                &output.join(PathBuf::from(file).with_extension("md")),
+                renderer.render(&recipe),
+            )
+            .unwrap_or_else(|e| {
+                eprintln!("failed to write file for recipe {file}: {e}");
+                process::exit(2);
+            });
         }
     } else {
         let recipe = Recipe::from_file(&args.input).unwrap_or_else(|e| {
@@ -82,13 +87,13 @@ fn main() {
 
         match args.output {
             Some(file) => {
-                recipe.to_file(&file, &settings).unwrap_or_else(|e| {
+                fs::write(&file, renderer.render(&recipe)).unwrap_or_else(|e| {
                     eprintln!("failed to write file: {e}");
                     process::exit(2);
                 });
             }
             None => {
-                print!("{}", recipe.to_markdown(&settings));
+                print!("{}", renderer.render(&recipe));
             }
         }
     }
