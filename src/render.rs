@@ -9,7 +9,7 @@ pub trait Renderer {
     fn render(&self, recipe: &Recipe) -> String;
 }
 
-/// Renders recipes as Markdown.
+/// Renders recipes in Markdown format.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Default)]
 pub struct Markdown {
     /// Whether to use YAML front matter instead of pure Markdown.
@@ -96,5 +96,69 @@ impl Renderer for Markdown {
 
         output.push_str("\n");
         output
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::Ingredient;
+    use crate::Metadata;
+
+    fn gen_recipe() -> Recipe {
+        Recipe {
+            metadata: Metadata {
+                name: "test recipe".to_string(),
+                author: "test author".to_string(),
+                servings: 1,
+                cook_minutes: 1,
+                ..Default::default()
+            },
+            steps: vec!["Step one".to_string()],
+            ingredients: vec![Ingredient {
+                name: "test ingredient".to_string(),
+                amount: Some(1.0),
+                ..Default::default()
+            }],
+        }
+    }
+
+    #[test]
+    fn test_render() {
+        let recipe = gen_recipe();
+
+        let renderer = Markdown::new();
+        let md = renderer.render(&recipe);
+
+        assert!(md.contains("# test recipe\n**test author**\n**1 servings | 1 minutes cook time**"));
+        assert!(md.contains("## Ingredients\n* 1 test ingredient"));
+        assert!(md.contains("## Method\n1. Step one"));
+    }
+
+    #[test]
+    fn test_render_front_matter() {
+        let recipe = gen_recipe();
+
+        let renderer = Markdown {
+            front_matter: true,
+            ..Default::default()
+        };
+        let md = renderer.render(&recipe);
+
+        assert!(md.contains("---\ntitle: test recipe\nauthor: test author\n---"));
+    }
+
+    #[test]
+    fn test_render_servings() {
+        let recipe = gen_recipe();
+
+        let renderer = Markdown {
+            servings: Some(2),
+            ..Default::default()
+        };
+        let md = renderer.render(&recipe);
+
+        assert!(md.contains("2 servings"));
+        assert!(md.contains("2 test ingredient"));
     }
 }
