@@ -39,3 +39,77 @@ impl Recipe {
         Ok(Self::from_yaml(&content)?)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_from_yaml() -> Result<(), SousError> {
+        let yaml = "
+name: test recipe
+author: test author
+servings: 1
+cook_minutes: 1
+steps:
+  - step 1
+ingredients:
+  - name: test ingredient
+    amount: 1
+    unit: test unit
+        ";
+
+        println!("{}", yaml);
+        let recipe = Recipe::from_yaml(yaml)?;
+        assert_eq!(recipe.metadata.name, "test recipe");
+        assert_eq!(recipe.metadata.author, "test author");
+        assert_eq!(recipe.metadata.servings, 1);
+        assert_eq!(recipe.metadata.cook_minutes, 1);
+        assert_eq!(recipe.steps, vec!["step 1"]);
+        assert_eq!(
+            recipe.ingredients,
+            vec![Ingredient {
+                name: "test ingredient".to_string(),
+                amount: Some(1.0),
+                unit: Some("test unit".to_string())
+            }]
+        );
+        Ok(())
+    }
+
+    #[test]
+    #[should_panic]
+    fn from_yaml_missing_name() {
+        let yaml = "
+author: test
+servings: 1
+cook_minutes: 1
+steps:
+  - step 1
+ingredients:
+  - name: test ingredient
+  - amount: 1
+  - unit: test unit
+        ";
+
+        Recipe::from_yaml(yaml).unwrap();
+    }
+
+    #[test]
+    #[should_panic]
+    fn from_yaml_bad_value() {
+        let yaml = "
+author: test
+servings: one
+cook_minutes: 1
+steps:
+  - step 1
+ingredients:
+  - name: test ingredient
+  - amount: 1
+  - unit: test unit
+        ";
+
+        Recipe::from_yaml(yaml).unwrap();
+    }
+}
