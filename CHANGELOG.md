@@ -12,6 +12,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Documentation comments for the public API.
 - New `Renderer` trait for types that can construct string representations of
   recipes.
+- A basic test suite for the `recipe` and `render` modules.
+- A GitHub Actions workflow to automagically publish to crates.io on release.
 
 ### Changed
 
