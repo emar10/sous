@@ -2,6 +2,25 @@
 
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [Unreleased] (Expected version [0.3.0])
+
+### Added
+
+- New dependency: [Tera](https://crates.io/crates/tera/).
+- `SousError::TemplateError` wraps the error type from Tera.
+- `TemplateRenderer` allows recipes to be rendered using Tera templates,
+  provided either as paths or raw strings.
+
+### Changed
+
+- Use only major versions for dependencies where possible in `Cargo.toml` (e.g.
+  `thiserror = "1.0.38"` becomes `1`).
+- Flattened public API in `lib.rs` (e.g. clients can use `sous::Renderer` instead
+  of `sous::render::Renderer`).
+- `Renderer::render` now returns a Result, allowing implementations to notify
+  clients of failures during rendering.
+- `Markdown` has been renamed to `MarkdownRenderer` for clarity.
+
 ## Version [0.2.0]
 
 ### Added
@@ -35,4 +54,5 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 [unreleased]: https://github.com/emar10/sous/compare/v0.2.0...HEAD
 [0.2.0]: https://github.com/emar10/sous/releases/tag/v0.2.0
+[0.3.0]: https://github.com/emar10/sous/milestone/2
 

@@ -13,6 +13,10 @@ pub enum SousError {
     #[error(transparent)]
     FileError(#[from] std::io::Error),
 
+    /// An error reading or rendering a template.
+    #[error(transparent)]
+    TemplateError(#[from] tera::Error),
+
     /// An unknown internal error, likely indicates a bug.
     #[error("Unknown internal error")]
     Unknown,

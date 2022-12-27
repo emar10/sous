@@ -4,10 +4,10 @@
 //! recipe, along with utilities for converting them between various formats.
 //!
 //! ```rust
-//! # use sous::ingredient::Ingredient;
-//! # use sous::recipe::Recipe;
-//! # use sous::render::Markdown;
-//! # use sous::render::Renderer;
+//! # use sous::Ingredient;
+//! # use sous::Recipe;
+//! # use sous::MarkdownRenderer;
+//! # use sous::Renderer;
 //! fn main() {
 //!     let mut recipe = Recipe::new();
 //!
@@ -24,23 +24,25 @@
 //!     recipe.steps.push("First step".to_string());
 //!     recipe.steps.push("Second step".to_string());
 //!
-//!     let render = Markdown::new();
+//!     let render = MarkdownRenderer::new();
 //!     let md = render.render(&recipe);
 //! }
 //! ```
 
 #![warn(missing_docs)]
 
+mod cookbook;
+mod error;
+mod ingredient;
+mod metadata;
+mod recipe;
+mod render;
+
 pub use crate::cookbook::Cookbook;
 pub use crate::error::SousError;
 pub use crate::ingredient::Ingredient;
 pub use crate::metadata::Metadata;
 pub use crate::recipe::Recipe;
-pub use crate::render::Markdown;
-
-pub mod cookbook;
-pub mod error;
-pub mod ingredient;
-pub mod metadata;
-pub mod recipe;
-pub mod render;
+pub use crate::render::MarkdownRenderer;
+pub use crate::render::Renderer;
+pub use crate::render::TemplateRenderer;

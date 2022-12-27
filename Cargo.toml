@@ -1,6 +1,6 @@
 [package]
 name = "sous"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2021"
 license = "MIT"
 description = "Manage culinary recipes in Rust"
@@ -8,8 +8,9 @@ repository = "https://github.com/emar10/sous/"
 readme = "README.md"
 
 [dependencies]
-clap = { version = "4.0.12", features = ["derive"] }
-serde = { version = "1.0.145", features = ["derive"] }
-serde_yaml = "0.9.13"
-thiserror = "1.0.37"
+clap = { version = "4", features = ["derive"] }
+serde = { version = "1", features = ["derive"] }
+serde_yaml = "0.9"
+tera = "1"
+thiserror = "1"
 

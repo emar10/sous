@@ -1,17 +1,22 @@
 //! Types for rendering recipes to other formats.
 
-use crate::Recipe;
-use std::fmt::Write;
+use tera::{Context, Tera};
+
+use crate::{Recipe, SousError};
+use std::{
+    fmt::Write,
+    path::{Path, PathBuf},
+};
 
 /// A type that can render a recipe to a String.
 pub trait Renderer {
     /// Construct a String representation of the provided [Recipe].
-    fn render(&self, recipe: &Recipe) -> String;
+    fn render(&self, recipe: &Recipe) -> Result<String, SousError>;
 }
 
 /// Renders recipes in Markdown format.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Default)]
-pub struct Markdown {
+pub struct MarkdownRenderer {
     /// Whether to use YAML front matter instead of pure Markdown.
     pub front_matter: bool,
     /// Whether to output meta information.
@@ -24,15 +29,15 @@ pub struct Markdown {
     pub servings: Option<u32>,
 }
 
-impl Markdown {
+impl MarkdownRenderer {
     /// Create default render self.
     pub fn new() -> Self {
         Default::default()
     }
 }
 
-impl Renderer for Markdown {
-    fn render(&self, recipe: &Recipe) -> String {
+impl Renderer for MarkdownRenderer {
+    fn render(&self, recipe: &Recipe) -> Result<String, SousError> {
         let mut output = String::new();
 
         let servings = match self.servings {
@@ -95,7 +100,41 @@ impl Renderer for Markdown {
         }
 
         output.push_str("\n");
-        output
+        Ok(output)
+    }
+}
+
+/// Renders recipes using a [Tera] template.
+#[derive(Clone, Debug)]
+pub struct TemplateRenderer {
+    env: Tera,
+}
+
+impl Renderer for TemplateRenderer {
+    fn render(&self, recipe: &Recipe) -> Result<String, SousError> {
+        let ctx = Context::from_serialize(recipe)?;
+        Ok(self.env.render("template", &ctx)?)
+    }
+}
+
+impl TemplateRenderer {
+    /// Create a new renderer using the provided template file.
+    pub fn from_path(path: &Path) -> Result<Self, SousError> {
+        let mut env = Tera::default();
+        let path = PathBuf::from(path);
+
+        env.add_template_file(&path, Some("template"))?;
+
+        Ok(TemplateRenderer { env })
+    }
+
+    /// Create a new renderer using the provided raw string.
+    pub fn from_str<S: AsRef<str>>(template: S) -> Result<Self, SousError> {
+        let mut env = Tera::default();
+
+        env.add_raw_template("template", template.as_ref())?;
+
+        Ok(TemplateRenderer { env })
     }
 }
 
@@ -124,11 +163,11 @@ mod tests {
     }
 
     #[test]
-    fn test_render() {
+    fn test_md_render() {
         let recipe = gen_recipe();
 
-        let renderer = Markdown::new();
-        let md = renderer.render(&recipe);
+        let renderer = MarkdownRenderer::new();
+        let md = renderer.render(&recipe).unwrap();
 
         assert!(md.contains("# test recipe\n**test author**\n**1 servings | 1 minutes cook time**"));
         assert!(md.contains("## Ingredients\n* 1 test ingredient"));
@@ -136,29 +175,66 @@ mod tests {
     }
 
     #[test]
-    fn test_render_front_matter() {
+    fn test_md_render_front_matter() {
         let recipe = gen_recipe();
 
-        let renderer = Markdown {
+        let renderer = MarkdownRenderer {
             front_matter: true,
             ..Default::default()
         };
-        let md = renderer.render(&recipe);
+        let md = renderer.render(&recipe).unwrap();
 
         assert!(md.contains("---\ntitle: test recipe\nauthor: test author\n---"));
     }
 
     #[test]
-    fn test_render_servings() {
+    fn test_md_render_servings() {
         let recipe = gen_recipe();
 
-        let renderer = Markdown {
+        let renderer = MarkdownRenderer {
             servings: Some(2),
             ..Default::default()
         };
-        let md = renderer.render(&recipe);
+        let md = renderer.render(&recipe).unwrap();
 
         assert!(md.contains("2 servings"));
         assert!(md.contains("2 test ingredient"));
+    }
+
+    #[test]
+    fn test_template_render_metadata() {
+        let recipe = gen_recipe();
+        let template =
+            "{{ name }}\n{{ author }}\n{{ servings }} serving \n{{ cook_minutes }} minute";
+
+        let renderer = TemplateRenderer::from_str(template).unwrap();
+        let output = renderer.render(&recipe).unwrap();
+
+        assert!(output.contains("test recipe"));
+        assert!(output.contains("test author"));
+        assert!(output.contains("1 serving"));
+        assert!(output.contains("1 minute"));
+    }
+
+    #[test]
+    fn test_template_render_ingredients() {
+        let recipe = gen_recipe();
+        let template = "{% for ingredient in ingredients %}\n{{ ingredient.name }}\n{% endfor %}";
+
+        let renderer = TemplateRenderer::from_str(template).unwrap();
+        let output = renderer.render(&recipe).unwrap();
+
+        assert!(output.contains("test ingredient"));
+    }
+
+    #[test]
+    fn test_template_render_steps() {
+        let recipe = gen_recipe();
+        let template = "{% for step in steps %}\n{{ step }}\n{% endfor %}";
+
+        let renderer = TemplateRenderer::from_str(template).unwrap();
+        let output = renderer.render(&recipe).unwrap();
+
+        assert!(output.contains("Step one"));
     }
 }
