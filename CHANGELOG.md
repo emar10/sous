@@ -10,6 +10,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `SousError::TemplateError` wraps the error type from Tera.
 - `TemplateRenderer` allows recipes to be rendered using Tera templates,
   provided either as paths or raw strings.
+- New CLI options: `--mode` and `--template` for templated output.
 
 ### Changed
 
