@@ -1,4 +1,9 @@
-use std::{fs, path::PathBuf, process, io::{stdin, Read}};
+use std::{
+    fs,
+    io::{stdin, Read},
+    path::PathBuf,
+    process,
+};
 
 use clap::{Parser, ValueEnum};
 use sous::{Cookbook, MarkdownRenderer, Recipe, Renderer, SousError, TemplateRenderer};

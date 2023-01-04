@@ -33,6 +33,7 @@
 
 mod cookbook;
 mod error;
+pub mod import;
 mod ingredient;
 mod metadata;
 mod recipe;
